@@ -239,7 +239,6 @@
         }
         
         .add-task input {
-            flex: 1;
             padding: 12px 16px;
             border: 1px solid var(--border);
             border-radius: 8px;
@@ -248,6 +247,13 @@
             font-size: 0.875rem;
             font-family: inherit;
             transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        
+        .add-task .task-input { flex: 1; }
+        
+        .add-task .date-input {
+            width: 130px;
+            color-scheme: dark;
         }
         
         .add-task input:focus {
@@ -259,12 +265,12 @@
         .add-task input::placeholder { color: var(--text-muted); }
         
         .add-task button {
-            padding: 12px 20px;
+            padding: 12px 16px;
             border: none;
             border-radius: 8px;
             background: var(--accent);
             color: white;
-            font-size: 0.875rem;
+            font-size: 1rem;
             font-weight: 500;
             cursor: pointer;
             transition: transform 0.1s, box-shadow 0.2s;
@@ -273,6 +279,62 @@
         .add-task button:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px var(--accent-glow);
+        }
+        
+        /* Edit Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            width: 90%;
+            max-width: 400px;
+        }
+        .modal h3 {
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+        }
+        .modal input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+        .modal input[type="date"] { color-scheme: dark; }
+        .modal-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            margin-top: 16px;
+        }
+        .modal-buttons button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+        .modal-buttons .cancel {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+        }
+        .modal-buttons .save {
+            background: var(--accent);
+            color: white;
         }
         
         /* Tasks */
@@ -487,8 +549,22 @@
         </div>
     </div>
 
+    <!-- Edit Modal -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal">
+            <h3>Edit Task</h3>
+            <input type="text" id="editText" placeholder="Task description">
+            <input type="date" id="editDate">
+            <div class="modal-buttons">
+                <button class="cancel" onclick="closeModal()">Cancel</button>
+                <button class="save" onclick="saveEdit()">Save</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const DEFENSE_DATE = new Date('2026-02-28T10:00:00');
+        let editingTask = null;
         
         const quotes = [
             { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
@@ -660,9 +736,10 @@
                                 <span class="subsection-count">${done}/${total}</span>
                             </div>
                             <div class="add-task">
-                                <input type="text" placeholder="Add a task..." 
-                                       onkeypress="if(event.key==='Enter')addTask('${section}','${key}',this)">
-                                <button onclick="addTask('${section}','${key}',this.previousElementSibling)">Add</button>
+                                <input type="text" placeholder="Add a task..." class="task-input"
+                                       onkeypress="if(event.key==='Enter')addTaskWithDate('${section}','${key}',this)">
+                                <input type="date" class="date-input" title="Due date (optional)">
+                                <button onclick="addTaskWithDate('${section}','${key}',this.parentElement.querySelector('.task-input'))">+</button>
                             </div>
                             <ul class="task-list">
                                 ${sub.tasks.map((task, i) => `
@@ -707,6 +784,20 @@
             input.focus();
         }
         
+        function addTaskWithDate(section, key, input) {
+            const text = input.value.trim();
+            if (!text) return;
+            const dateInput = input.parentElement.querySelector('.date-input');
+            const task = { text, done: false, created: Date.now() };
+            if (dateInput.value) task.due = dateInput.value;
+            data[section][key].tasks.unshift(task);
+            save();
+            render();
+            input.value = '';
+            dateInput.value = '';
+            input.focus();
+        }
+        
         function toggleTask(section, key, index) {
             data[section][key].tasks[index].done = !data[section][key].tasks[index].done;
             save();
@@ -721,20 +812,29 @@
         
         function editTask(section, key, index) {
             const task = data[section][key].tasks[index];
-            const newText = prompt('Edit task:', task.text);
-            if (newText === null) return;
-            if (newText.trim()) {
-                task.text = newText.trim();
-            }
-            const newDue = prompt('Due date (YYYY-MM-DD or leave empty):', task.due || '');
-            if (newDue === null) return;
-            if (newDue.trim()) {
-                task.due = newDue.trim();
-            } else {
-                delete task.due;
-            }
+            editingTask = { section, key, index };
+            document.getElementById('editText').value = task.text;
+            document.getElementById('editDate').value = task.due || '';
+            document.getElementById('editModal').classList.add('active');
+        }
+        
+        function closeModal() {
+            document.getElementById('editModal').classList.remove('active');
+            editingTask = null;
+        }
+        
+        function saveEdit() {
+            if (!editingTask) return;
+            const { section, key, index } = editingTask;
+            const task = data[section][key].tasks[index];
+            const newText = document.getElementById('editText').value.trim();
+            const newDue = document.getElementById('editDate').value;
+            if (newText) task.text = newText;
+            if (newDue) task.due = newDue;
+            else delete task.due;
             save();
             render();
+            closeModal();
         }
         
         // Init
