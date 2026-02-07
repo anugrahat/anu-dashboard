@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anu's Dashboard</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 { font-size: 2rem; margin-bottom: 5px; }
+        .header p { color: #888; font-size: 0.9rem; }
+        .countdown {
+            background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%);
+            padding: 15px 25px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .countdown span { font-size: 1.5rem; font-weight: bold; }
+        .main-columns {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .main-section {
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .main-section h2 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+        }
+        .main-section.work h2 { color: #4ecdc4; border-color: #4ecdc4; }
+        .main-section.personal h2 { color: #ffe66d; border-color: #ffe66d; }
+        .subsection {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .subsection h3 {
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #ccc;
+        }
+        .add-task {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .add-task input {
+            flex: 1;
+            padding: 10px 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 0.9rem;
+        }
+        .add-task input::placeholder { color: #666; }
+        .add-task button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.2);
+            color: #fff;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .add-task button:hover { background: rgba(255,255,255,0.3); }
+        .task-list { list-style: none; }
+        .task {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+            margin-bottom: 6px;
+            transition: all 0.2s;
+        }
+        .task:hover { background: rgba(255,255,255,0.08); }
+        .task.done { opacity: 0.5; }
+        .task.done .task-text { text-decoration: line-through; }
+        .task input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #4ecdc4;
+        }
+        .task-text { flex: 1; font-size: 0.9rem; }
+        .task .delete {
+            background: none;
+            border: none;
+            color: #ff6b6b;
+            cursor: pointer;
+            font-size: 1.1rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .task:hover .delete { opacity: 1; }
+        .progress {
+            margin-top: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 6px;
+            height: 6px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            transition: width 0.3s;
+            background: #4ecdc4;
+        }
+        .main-section.personal .progress-bar { background: #ffe66d; }
+        .stats {
+            margin-top: 6px;
+            font-size: 0.75rem;
+            color: #666;
+            text-align: right;
+        }
+        .add-subsection {
+            margin-top: 10px;
+            text-align: center;
+        }
+        .add-subsection button {
+            background: rgba(255,255,255,0.1);
+            border: 1px dashed rgba(255,255,255,0.2);
+            color: #888;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .add-subsection button:hover {
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 20px;
+            color: #555;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🐦 Anu's Dashboard</h1>
+        <p>Work · Personal</p>
+        <div class="countdown">
+            <span id="countdown">Loading...</span>
+            <div style="font-size: 0.8rem; margin-top: 5px;">until defense</div>
+        </div>
+    </div>
+    
+    <div class="main-columns">
+        <div class="main-section work" data-section="work">
+            <h2>💼 Work</h2>
+            <div id="work-subsections"></div>
+            <div class="add-subsection">
+                <button onclick="addSubsection('work')">+ Add Category</button>
+            </div>
+        </div>
+        
+        <div class="main-section personal" data-section="personal">
+            <h2>🌟 Personal</h2>
+            <div id="personal-subsections"></div>
+            <div class="add-subsection">
+                <button onclick="addSubsection('personal')">+ Add Category</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const DEFENSE_DATE = new Date('2026-02-28T10:00:00');
+        
+        // Default structure
+        const defaultData = {
+            work: {
+                thesis: { name: "📚 Thesis Defense", tasks: [] },
+                startup: { name: "🚀 NeoVariant", tasks: [] },
+                jobs: { name: "🎯 Job Search", tasks: [] }
+            },
+            personal: {
+                life: { name: "🏠 Life", tasks: [] },
+                health: { name: "💪 Health", tasks: [] }
+            }
+        };
+        
+        let data = JSON.parse(localStorage.getItem('anu-dashboard') || 'null') || defaultData;
+        
+        function save() {
+            localStorage.setItem('anu-dashboard', JSON.stringify(data));
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        function render() {
+            ['work', 'personal'].forEach(section => {
+                const container = document.getElementById(section + '-subsections');
+                const subs = data[section];
+                
+                if (Object.keys(subs).length === 0) {
+                    container.innerHTML = '<div class="empty-state">No categories yet</div>';
+                    return;
+                }
+                
+                container.innerHTML = Object.entries(subs).map(([key, sub]) => {
+                    const done = sub.tasks.filter(t => t.done).length;
+                    const total = sub.tasks.length;
+                    const pct = total ? (done / total * 100) : 0;
+                    
+                    return `
+                        <div class="subsection" data-key="${key}">
+                            <h3>
+                                <span>${escapeHtml(sub.name)}</span>
+                                <button onclick="deleteSubsection('${section}', '${key}')" 
+                                        style="margin-left:auto;background:none;border:none;color:#ff6b6b;cursor:pointer;font-size:0.8rem;">×</button>
+                            </h3>
+                            <div class="add-task">
+                                <input type="text" placeholder="Add task..." 
+                                       onkeypress="if(event.key==='Enter')addTask('${section}','${key}',this)">
+                                <button onclick="addTask('${section}','${key}',this.previousElementSibling)">+</button>
+                            </div>
+                            <ul class="task-list">
+                                ${sub.tasks.map((task, i) => `
+                                    <li class="task ${task.done ? 'done' : ''}">
+                                        <input type="checkbox" ${task.done ? 'checked' : ''} 
+                                               onchange="toggleTask('${section}','${key}',${i})">
+                                        <span class="task-text">${escapeHtml(task.text)}</span>
+                                        <button class="delete" onclick="deleteTask('${section}','${key}',${i})">×</button>
+                                    </li>
+                                `).join('')}
+                            </ul>
+                            <div class="progress"><div class="progress-bar" style="width:${pct}%"></div></div>
+                            <div class="stats">${done}/${total} done</div>
+                        </div>
+                    `;
+                }).join('');
+            });
+        }
+        
+        function addSubsection(section) {
+            const name = prompt('Category name:');
+            if (!name) return;
+            const key = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+            data[section][key] = { name, tasks: [] };
+            save();
+            render();
+        }
+        
+        function deleteSubsection(section, key) {
+            if (!confirm('Delete this category and all its tasks?')) return;
+            delete data[section][key];
+            save();
+            render();
+        }
+        
+        function addTask(section, key, input) {
+            const text = input.value.trim();
+            if (!text) return;
+            data[section][key].tasks.push({ text, done: false, created: Date.now() });
+            save();
+            render();
+            input.value = '';
+        }
+        
+        function toggleTask(section, key, index) {
+            data[section][key].tasks[index].done = !data[section][key].tasks[index].done;
+            save();
+            render();
+        }
+        
+        function deleteTask(section, key, index) {
+            data[section][key].tasks.splice(index, 1);
+            save();
+            render();
+        }
+        
+        function updateCountdown() {
+            const now = new Date();
+            const diff = DEFENSE_DATE - now;
+            
+            if (diff <= 0) {
+                document.getElementById('countdown').textContent = "🎉 Defense Day!";
+                return;
+            }
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            
+            document.getElementById('countdown').textContent = `${days}d ${hours}h`;
+        }
+        
+        render();
+        updateCountdown();
+        setInterval(updateCountdown, 60000);
+    </script>
+</body>
+</html>
