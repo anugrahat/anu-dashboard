@@ -327,18 +327,20 @@
             font-size: 0.9rem;
         }
         
-        .task .delete {
+        .task .edit, .task .delete {
             opacity: 0;
             background: none;
             border: none;
-            color: var(--danger);
             cursor: pointer;
-            font-size: 1.2rem;
+            font-size: 1rem;
             padding: 4px 8px;
             transition: opacity 0.15s;
         }
         
-        .task:hover .delete { opacity: 1; }
+        .task .edit { color: var(--text-secondary); }
+        .task .delete { color: var(--danger); }
+        
+        .task:hover .edit, .task:hover .delete { opacity: 1; }
         
         .task .due-date {
             margin-left: 8px;
@@ -664,6 +666,7 @@
                                         <input type="checkbox" ${task.done ? 'checked' : ''} 
                                                onclick="event.stopPropagation(); toggleTask('${section}','${key}',${i})">
                                         <span class="task-text">${escapeHtml(task.text)}${task.due ? '<span class="due-date">' + formatDue(task.due) + '</span>' : ''}</span>
+                                        <button class="edit" onclick="event.stopPropagation(); editTask('${section}','${key}',${i})">✎</button>
                                         <button class="delete" onclick="event.stopPropagation(); deleteTask('${section}','${key}',${i})">×</button>
                                     </li>
                                 `).join('')}
@@ -708,6 +711,24 @@
         
         function deleteTask(section, key, index) {
             data[section][key].tasks.splice(index, 1);
+            save();
+            render();
+        }
+        
+        function editTask(section, key, index) {
+            const task = data[section][key].tasks[index];
+            const newText = prompt('Edit task:', task.text);
+            if (newText === null) return;
+            if (newText.trim()) {
+                task.text = newText.trim();
+            }
+            const newDue = prompt('Due date (YYYY-MM-DD or leave empty):', task.due || '');
+            if (newDue === null) return;
+            if (newDue.trim()) {
+                task.due = newDue.trim();
+            } else {
+                delete task.due;
+            }
             save();
             render();
         }
