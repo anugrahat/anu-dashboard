@@ -497,6 +497,38 @@
         
         let data = JSON.parse(localStorage.getItem('anu-dashboard-v2') || 'null') || defaultData;
         
+        // Fetch remote tasks from Kuku and merge
+        async function syncRemoteTasks() {
+            try {
+                const res = await fetch('tasks.json?t=' + Date.now());
+                if (!res.ok) return;
+                const remote = await res.json();
+                
+                // Merge remote into local
+                ['work', 'personal'].forEach(section => {
+                    if (!remote[section]) return;
+                    Object.entries(remote[section]).forEach(([key, sub]) => {
+                        if (!data[section][key]) {
+                            // New category from Kuku
+                            data[section][key] = sub;
+                        } else {
+                            // Merge tasks - add remote tasks not in local
+                            const localTexts = new Set(data[section][key].tasks.map(t => t.text));
+                            sub.tasks.forEach(t => {
+                                if (!localTexts.has(t.text)) {
+                                    data[section][key].tasks.unshift(t);
+                                }
+                            });
+                        }
+                    });
+                });
+                save();
+                render();
+            } catch (e) {
+                console.log('No remote sync available');
+            }
+        }
+        
         function save() {
             localStorage.setItem('anu-dashboard-v2', JSON.stringify(data));
         }
@@ -656,6 +688,7 @@
         updateCountdown();
         updateQuote();
         render();
+        syncRemoteTasks(); // Fetch tasks from Kuku
         
         setInterval(updateCountdown, 60000);
         setInterval(updateGreeting, 60000);

@@ -1,0 +1,14 @@
+{
+  "work": {
+    "thesis": { "name": "📚 Exit Seminar", "tasks": [] },
+    "startup": { "name": "🚀 NeoVariant", "tasks": [] },
+    "jobs": { "name": "🎯 Job Search", "tasks": [] }
+  },
+  "personal": {
+    "life": { "name": "🏠 Life", "tasks": [] },
+    "health": { "name": "💪 Health", "tasks": [] },
+    "taxes": { "name": "💰 Taxes", "tasks": [
+      { "text": "Call IRS about notice", "done": false, "created": 1707336660000 }
+    ]}
+  }
+}
