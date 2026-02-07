@@ -340,6 +340,20 @@
         
         .task:hover .delete { opacity: 1; }
         
+        .task .due-date {
+            margin-left: 8px;
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--accent);
+        }
+        
+        .task.overdue .due-date {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+        
         /* Progress Bar */
         .progress-bar-container {
             margin-top: 16px;
@@ -539,6 +553,21 @@
             return div.innerHTML;
         }
         
+        function formatDue(dateStr) {
+            const due = new Date(dateStr + 'T23:59:59');
+            const now = new Date();
+            const diff = Math.ceil((due - now) / (1000 * 60 * 60 * 24));
+            
+            if (diff < 0) return 'overdue';
+            if (diff === 0) return 'today';
+            if (diff === 1) return 'tomorrow';
+            if (diff <= 7) {
+                const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                return days[due.getDay()];
+            }
+            return due.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        }
+        
         function updateGreeting() {
             const hour = new Date().getHours();
             let greeting = 'Good evening';
@@ -631,10 +660,10 @@
                             </div>
                             <ul class="task-list">
                                 ${sub.tasks.map((task, i) => `
-                                    <li class="task ${task.done ? 'done' : ''}" onclick="toggleTask('${section}','${key}',${i})">
+                                    <li class="task ${task.done ? 'done' : ''} ${task.due && !task.done && new Date(task.due) < new Date() ? 'overdue' : ''}" onclick="toggleTask('${section}','${key}',${i})">
                                         <input type="checkbox" ${task.done ? 'checked' : ''} 
                                                onclick="event.stopPropagation(); toggleTask('${section}','${key}',${i})">
-                                        <span class="task-text">${escapeHtml(task.text)}</span>
+                                        <span class="task-text">${escapeHtml(task.text)}${task.due ? '<span class="due-date">' + formatDue(task.due) + '</span>' : ''}</span>
                                         <button class="delete" onclick="event.stopPropagation(); deleteTask('${section}','${key}',${i})">×</button>
                                     </li>
                                 `).join('')}

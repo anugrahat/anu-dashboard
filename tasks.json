@@ -2,7 +2,10 @@
   "work": {
     "thesis": { "name": "📚 Exit Seminar", "tasks": [] },
     "startup": { "name": "🚀 NeoVariant", "tasks": [] },
-    "jobs": { "name": "🎯 Job Search", "tasks": [] }
+    "jobs": { "name": "🎯 Job Search", "tasks": [] },
+    "teaching": { "name": "📝 Teaching", "tasks": [
+      { "text": "Grade papers", "done": false, "created": 1707336840000, "due": "2026-02-10" }
+    ]}
   },
   "personal": {
     "life": { "name": "🏠 Life", "tasks": [] },
