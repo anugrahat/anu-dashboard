@@ -3,190 +3,466 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anu's Dashboard</title>
+    <title>Anu — Focus Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #16161f;
+            --bg-hover: #1c1c28;
+            --accent: #6366f1;
+            --accent-glow: rgba(99, 102, 241, 0.3);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #475569;
+            --border: rgba(255,255,255,0.06);
+        }
+        
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
             min-height: 100vh;
-            color: #fff;
-            padding: 20px;
+            color: var(--text-primary);
+            line-height: 1.5;
         }
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .header h1 { font-size: 2rem; margin-bottom: 5px; }
-        .header p { color: #888; font-size: 0.9rem; }
-        .countdown {
-            background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%);
-            padding: 15px 25px;
-            border-radius: 12px;
-            display: inline-block;
-            margin-top: 10px;
-        }
-        .countdown span { font-size: 1.5rem; font-weight: bold; }
-        .main-columns {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 25px;
+        
+        .container {
             max-width: 1400px;
             margin: 0 auto;
+            padding: 40px 24px;
         }
-        .main-section {
-            background: rgba(255,255,255,0.03);
-            border-radius: 20px;
-            padding: 25px;
-            border: 1px solid rgba(255,255,255,0.08);
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 48px;
         }
-        .main-section h2 {
-            font-size: 1.3rem;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid rgba(255,255,255,0.1);
+        
+        .greeting h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 4px;
         }
-        .main-section.work h2 { color: #4ecdc4; border-color: #4ecdc4; }
-        .main-section.personal h2 { color: #ffe66d; border-color: #ffe66d; }
-        .subsection {
-            background: rgba(255,255,255,0.05);
+        
+        .greeting p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+        
+        .defense-countdown {
+            text-align: right;
+        }
+        
+        .defense-countdown .label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+        
+        .defense-countdown .time {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .defense-countdown .subtext {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Quote */
+        .quote-section {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1));
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px 32px;
+            margin-bottom: 48px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quote-section::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 8rem;
+            color: rgba(99, 102, 241, 0.1);
+            font-family: Georgia, serif;
+        }
+        
+        .quote {
+            font-size: 1.25rem;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .quote-author {
+            margin-top: 8px;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        /* Stats Row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+        
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            border: 1px solid rgba(255,255,255,0.05);
+            padding: 20px;
+            text-align: center;
         }
-        .subsection h3 {
-            font-size: 0.95rem;
-            margin-bottom: 12px;
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .stat-value.accent { color: var(--accent); }
+        .stat-value.success { color: var(--success); }
+        .stat-value.warning { color: var(--warning); }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+        
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        
+        @media (max-width: 900px) {
+            .main-grid { grid-template-columns: 1fr; }
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        /* Section */
+        .section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 8px;
-            color: #ccc;
+            gap: 10px;
         }
+        
+        .section-title .icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+        
+        .section.work .section-title .icon { background: rgba(99, 102, 241, 0.2); }
+        .section.personal .section-title .icon { background: rgba(245, 158, 11, 0.2); }
+        
+        .section-progress {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Subsection */
+        .subsection {
+            margin-bottom: 20px;
+        }
+        
+        .subsection:last-child { margin-bottom: 0; }
+        
+        .subsection-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .subsection-title {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .subsection-count {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        
+        /* Add Task */
         .add-task {
             display: flex;
             gap: 8px;
             margin-bottom: 12px;
         }
+        
         .add-task input {
             flex: 1;
-            padding: 10px 12px;
-            border: none;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
             border-radius: 8px;
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-            font-size: 0.9rem;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            font-family: inherit;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
-        .add-task input::placeholder { color: #666; }
+        
+        .add-task input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+        
+        .add-task input::placeholder { color: var(--text-muted); }
+        
         .add-task button {
-            padding: 10px 16px;
+            padding: 12px 20px;
             border: none;
             border-radius: 8px;
-            background: rgba(255,255,255,0.2);
-            color: #fff;
+            background: var(--accent);
+            color: white;
+            font-size: 0.875rem;
+            font-weight: 500;
             cursor: pointer;
-            font-size: 1rem;
+            transition: transform 0.1s, box-shadow 0.2s;
         }
-        .add-task button:hover { background: rgba(255,255,255,0.3); }
+        
+        .add-task button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px var(--accent-glow);
+        }
+        
+        /* Tasks */
         .task-list { list-style: none; }
+        
         .task {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px;
-            background: rgba(255,255,255,0.03);
+            gap: 12px;
+            padding: 12px;
             border-radius: 8px;
-            margin-bottom: 6px;
-            transition: all 0.2s;
+            margin-bottom: 4px;
+            transition: background 0.15s;
+            cursor: pointer;
         }
-        .task:hover { background: rgba(255,255,255,0.08); }
+        
+        .task:hover { background: var(--bg-hover); }
+        
         .task.done { opacity: 0.5; }
         .task.done .task-text { text-decoration: line-through; }
+        
         .task input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--text-muted);
+            border-radius: 6px;
             cursor: pointer;
-            accent-color: #4ecdc4;
+            transition: all 0.15s;
+            position: relative;
+            flex-shrink: 0;
         }
-        .task-text { flex: 1; font-size: 0.9rem; }
+        
+        .task input[type="checkbox"]:checked {
+            background: var(--success);
+            border-color: var(--success);
+        }
+        
+        .task input[type="checkbox"]:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .task-text {
+            flex: 1;
+            font-size: 0.9rem;
+        }
+        
         .task .delete {
+            opacity: 0;
             background: none;
             border: none;
-            color: #ff6b6b;
+            color: var(--danger);
             cursor: pointer;
-            font-size: 1.1rem;
-            opacity: 0;
-            transition: opacity 0.2s;
+            font-size: 1.2rem;
+            padding: 4px 8px;
+            transition: opacity 0.15s;
         }
+        
         .task:hover .delete { opacity: 1; }
-        .progress {
-            margin-top: 10px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 6px;
+        
+        /* Progress Bar */
+        .progress-bar-container {
+            margin-top: 16px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
             height: 6px;
             overflow: hidden;
         }
+        
         .progress-bar {
             height: 100%;
-            transition: width 0.3s;
-            background: #4ecdc4;
+            background: linear-gradient(90deg, var(--accent), #a855f7);
+            border-radius: 8px;
+            transition: width 0.4s ease;
         }
-        .main-section.personal .progress-bar { background: #ffe66d; }
-        .stats {
-            margin-top: 6px;
-            font-size: 0.75rem;
-            color: #666;
-            text-align: right;
-        }
-        .add-subsection {
-            margin-top: 10px;
+        
+        /* Add Category Button */
+        .add-category {
+            margin-top: 16px;
             text-align: center;
         }
-        .add-subsection button {
-            background: rgba(255,255,255,0.1);
-            border: 1px dashed rgba(255,255,255,0.2);
-            color: #888;
+        
+        .add-category button {
+            background: transparent;
+            border: 1px dashed var(--border);
+            color: var(--text-muted);
             padding: 10px 20px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 0.85rem;
+            font-size: 0.875rem;
+            transition: all 0.15s;
         }
-        .add-subsection button:hover {
-            background: rgba(255,255,255,0.15);
-            color: #fff;
+        
+        .add-category button:hover {
+            border-color: var(--accent);
+            color: var(--accent);
         }
+        
+        /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 20px;
-            color: #555;
-            font-size: 0.9rem;
+            padding: 32px;
+            color: var(--text-muted);
+        }
+        
+        /* Streak Badge */
+        .streak-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #f59e0b, #ef4444);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>🐦 Anu's Dashboard</h1>
-        <p>Work · Personal</p>
-        <div class="countdown">
-            <span id="countdown">Loading...</span>
-            <div style="font-size: 0.8rem; margin-top: 5px;">until defense</div>
+    <div class="container">
+        <header class="header">
+            <div class="greeting">
+                <h1 id="greeting">Good morning, Anu</h1>
+                <p id="date-display"></p>
+            </div>
+            <div class="defense-countdown">
+                <div class="label">Thesis Defense</div>
+                <div class="time" id="countdown">--</div>
+                <div class="subtext">days remaining</div>
+            </div>
+        </header>
+        
+        <div class="quote-section">
+            <p class="quote" id="quote">The only way to do great work is to love what you do.</p>
+            <p class="quote-author" id="quote-author">— Steve Jobs</p>
         </div>
-    </div>
-    
-    <div class="main-columns">
-        <div class="main-section work" data-section="work">
-            <h2>💼 Work</h2>
-            <div id="work-subsections"></div>
-            <div class="add-subsection">
-                <button onclick="addSubsection('work')">+ Add Category</button>
+        
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-value accent" id="total-tasks">0</div>
+                <div class="stat-label">Total Tasks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value success" id="completed-tasks">0</div>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value warning" id="pending-tasks">0</div>
+                <div class="stat-label">In Progress</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="completion-rate">0%</div>
+                <div class="stat-label">Completion Rate</div>
             </div>
         </div>
         
-        <div class="main-section personal" data-section="personal">
-            <h2>🌟 Personal</h2>
-            <div id="personal-subsections"></div>
-            <div class="add-subsection">
-                <button onclick="addSubsection('personal')">+ Add Category</button>
+        <div class="main-grid">
+            <div class="section work">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="icon">💼</span>
+                        Work
+                    </h2>
+                    <span class="section-progress" id="work-progress">0/0</span>
+                </div>
+                <div id="work-subsections"></div>
+                <div class="add-category">
+                    <button onclick="addSubsection('work')">+ Add Category</button>
+                </div>
+            </div>
+            
+            <div class="section personal">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="icon">✨</span>
+                        Personal
+                    </h2>
+                    <span class="section-progress" id="personal-progress">0/0</span>
+                </div>
+                <div id="personal-subsections"></div>
+                <div class="add-category">
+                    <button onclick="addSubsection('personal')">+ Add Category</button>
+                </div>
             </div>
         </div>
     </div>
@@ -194,7 +470,19 @@
     <script>
         const DEFENSE_DATE = new Date('2026-02-28T10:00:00');
         
-        // Default structure
+        const quotes = [
+            { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+            { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
+            { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
+            { text: "It does not matter how slowly you go as long as you do not stop.", author: "Confucius" },
+            { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
+            { text: "The PhD is a marathon, not a sprint. Pace yourself.", author: "Academia Wisdom" },
+            { text: "Done is better than perfect.", author: "Sheryl Sandberg" },
+            { text: "Small daily improvements are the key to staggering long-term results.", author: "Robin Sharma" },
+            { text: "The dissertation is not your life's work. It's your ticket to your life's work.", author: "Anonymous" },
+            { text: "You don't have to be great to start, but you have to start to be great.", author: "Zig Ziglar" }
+        ];
+        
         const defaultData = {
             work: {
                 thesis: { name: "📚 Thesis Defense", tasks: [] },
@@ -207,10 +495,10 @@
             }
         };
         
-        let data = JSON.parse(localStorage.getItem('anu-dashboard') || 'null') || defaultData;
+        let data = JSON.parse(localStorage.getItem('anu-dashboard-v2') || 'null') || defaultData;
         
         function save() {
-            localStorage.setItem('anu-dashboard', JSON.stringify(data));
+            localStorage.setItem('anu-dashboard-v2', JSON.stringify(data));
         }
         
         function escapeHtml(text) {
@@ -219,13 +507,77 @@
             return div.innerHTML;
         }
         
+        function updateGreeting() {
+            const hour = new Date().getHours();
+            let greeting = 'Good evening';
+            if (hour < 12) greeting = 'Good morning';
+            else if (hour < 17) greeting = 'Good afternoon';
+            
+            document.getElementById('greeting').textContent = `${greeting}, Anu`;
+            
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('date-display').textContent = new Date().toLocaleDateString('en-US', options);
+        }
+        
+        function updateCountdown() {
+            const now = new Date();
+            const diff = DEFENSE_DATE - now;
+            const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+            
+            document.getElementById('countdown').textContent = days > 0 ? days : '🎉';
+        }
+        
+        function updateQuote() {
+            const today = new Date().toDateString();
+            const storedDate = localStorage.getItem('quote-date');
+            let quoteIndex = parseInt(localStorage.getItem('quote-index') || '0');
+            
+            if (storedDate !== today) {
+                quoteIndex = Math.floor(Math.random() * quotes.length);
+                localStorage.setItem('quote-date', today);
+                localStorage.setItem('quote-index', quoteIndex);
+            }
+            
+            const quote = quotes[quoteIndex];
+            document.getElementById('quote').textContent = quote.text;
+            document.getElementById('quote-author').textContent = `— ${quote.author}`;
+        }
+        
+        function updateStats() {
+            let total = 0, completed = 0;
+            
+            ['work', 'personal'].forEach(section => {
+                Object.values(data[section]).forEach(sub => {
+                    total += sub.tasks.length;
+                    completed += sub.tasks.filter(t => t.done).length;
+                });
+            });
+            
+            const pending = total - completed;
+            const rate = total ? Math.round((completed / total) * 100) : 0;
+            
+            document.getElementById('total-tasks').textContent = total;
+            document.getElementById('completed-tasks').textContent = completed;
+            document.getElementById('pending-tasks').textContent = pending;
+            document.getElementById('completion-rate').textContent = rate + '%';
+        }
+        
+        function updateSectionProgress(section) {
+            let total = 0, completed = 0;
+            Object.values(data[section]).forEach(sub => {
+                total += sub.tasks.length;
+                completed += sub.tasks.filter(t => t.done).length;
+            });
+            document.getElementById(`${section}-progress`).textContent = `${completed}/${total}`;
+        }
+        
         function render() {
             ['work', 'personal'].forEach(section => {
-                const container = document.getElementById(section + '-subsections');
+                const container = document.getElementById(`${section}-subsections`);
                 const subs = data[section];
                 
                 if (Object.keys(subs).length === 0) {
-                    container.innerHTML = '<div class="empty-state">No categories yet</div>';
+                    container.innerHTML = '<div class="empty-state">No categories yet. Add one to get started!</div>';
                     return;
                 }
                 
@@ -236,46 +588,43 @@
                     
                     return `
                         <div class="subsection" data-key="${key}">
-                            <h3>
-                                <span>${escapeHtml(sub.name)}</span>
-                                <button onclick="deleteSubsection('${section}', '${key}')" 
-                                        style="margin-left:auto;background:none;border:none;color:#ff6b6b;cursor:pointer;font-size:0.8rem;">×</button>
-                            </h3>
+                            <div class="subsection-header">
+                                <span class="subsection-title">${escapeHtml(sub.name)}</span>
+                                <span class="subsection-count">${done}/${total}</span>
+                            </div>
                             <div class="add-task">
-                                <input type="text" placeholder="Add task..." 
+                                <input type="text" placeholder="Add a task..." 
                                        onkeypress="if(event.key==='Enter')addTask('${section}','${key}',this)">
-                                <button onclick="addTask('${section}','${key}',this.previousElementSibling)">+</button>
+                                <button onclick="addTask('${section}','${key}',this.previousElementSibling)">Add</button>
                             </div>
                             <ul class="task-list">
                                 ${sub.tasks.map((task, i) => `
-                                    <li class="task ${task.done ? 'done' : ''}">
+                                    <li class="task ${task.done ? 'done' : ''}" onclick="toggleTask('${section}','${key}',${i})">
                                         <input type="checkbox" ${task.done ? 'checked' : ''} 
-                                               onchange="toggleTask('${section}','${key}',${i})">
+                                               onclick="event.stopPropagation(); toggleTask('${section}','${key}',${i})">
                                         <span class="task-text">${escapeHtml(task.text)}</span>
-                                        <button class="delete" onclick="deleteTask('${section}','${key}',${i})">×</button>
+                                        <button class="delete" onclick="event.stopPropagation(); deleteTask('${section}','${key}',${i})">×</button>
                                     </li>
                                 `).join('')}
                             </ul>
-                            <div class="progress"><div class="progress-bar" style="width:${pct}%"></div></div>
-                            <div class="stats">${done}/${total} done</div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width:${pct}%"></div>
+                            </div>
                         </div>
                     `;
                 }).join('');
+                
+                updateSectionProgress(section);
             });
+            
+            updateStats();
         }
         
         function addSubsection(section) {
-            const name = prompt('Category name:');
+            const name = prompt('Category name (with emoji if you want):');
             if (!name) return;
-            const key = name.toLowerCase().replace(/[^a-z0-9]/g, '');
+            const key = 'cat_' + Date.now();
             data[section][key] = { name, tasks: [] };
-            save();
-            render();
-        }
-        
-        function deleteSubsection(section, key) {
-            if (!confirm('Delete this category and all its tasks?')) return;
-            delete data[section][key];
             save();
             render();
         }
@@ -283,10 +632,11 @@
         function addTask(section, key, input) {
             const text = input.value.trim();
             if (!text) return;
-            data[section][key].tasks.push({ text, done: false, created: Date.now() });
+            data[section][key].tasks.unshift({ text, done: false, created: Date.now() });
             save();
             render();
             input.value = '';
+            input.focus();
         }
         
         function toggleTask(section, key, index) {
@@ -301,24 +651,14 @@
             render();
         }
         
-        function updateCountdown() {
-            const now = new Date();
-            const diff = DEFENSE_DATE - now;
-            
-            if (diff <= 0) {
-                document.getElementById('countdown').textContent = "🎉 Defense Day!";
-                return;
-            }
-            
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            
-            document.getElementById('countdown').textContent = `${days}d ${hours}h`;
-        }
-        
-        render();
+        // Init
+        updateGreeting();
         updateCountdown();
+        updateQuote();
+        render();
+        
         setInterval(updateCountdown, 60000);
+        setInterval(updateGreeting, 60000);
     </script>
 </body>
 </html>
