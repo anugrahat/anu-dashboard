@@ -226,10 +226,29 @@
             color: var(--text-secondary);
         }
         
+        .subsection-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
         .subsection-count {
             font-size: 0.75rem;
             color: var(--text-muted);
         }
+        
+        .delete-cat {
+            opacity: 0.3;
+            background: none;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 1.1rem;
+            padding: 2px 6px;
+            transition: opacity 0.15s;
+        }
+        
+        .subsection:hover .delete-cat { opacity: 1; }
         
         /* Add Task */
         .add-task {
@@ -733,7 +752,10 @@
                         <div class="subsection" data-key="${key}">
                             <div class="subsection-header">
                                 <span class="subsection-title">${escapeHtml(sub.name)}</span>
-                                <span class="subsection-count">${done}/${total}</span>
+                                <div class="subsection-actions">
+                                    <span class="subsection-count">${done}/${total}</span>
+                                    <button class="delete-cat" onclick="event.stopPropagation(); deleteCategory('${section}','${key}')" title="Delete category">×</button>
+                                </div>
                             </div>
                             <div class="add-task">
                                 <input type="text" placeholder="Add a task..." class="task-input"
@@ -770,6 +792,14 @@
             if (!name) return;
             const key = 'cat_' + Date.now();
             data[section][key] = { name, tasks: [] };
+            save();
+            render();
+        }
+        
+        function deleteCategory(section, key) {
+            const cat = data[section][key];
+            if (!confirm(`Delete "${cat.name}" and all its tasks?`)) return;
+            delete data[section][key];
             save();
             render();
         }
