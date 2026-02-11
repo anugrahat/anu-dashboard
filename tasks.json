@@ -1,8 +1,17 @@
 {
   "work": {
-    "thesis": { "name": "📚 Exit Seminar", "tasks": [] },
-    "startup": { "name": "🚀 NeoVariant", "tasks": [] },
-    "jobs": { "name": "🎯 Job Search", "tasks": [] },
+    "thesis": { "name": "📚 Exit Seminar", "tasks": [
+      { "text": "Add citations to presentation", "done": false, "created": 1707609600000, "due": "2026-02-13" },
+      { "text": "Edit presentation (Roland's feedback)", "done": false, "created": 1707609600000, "due": "2026-02-13" },
+      { "text": "Edit thesis (Roland's feedback)", "done": false, "created": 1707609600000, "due": "2026-02-13" }
+    ]},
+    "startup": { "name": "🚀 NeoVariant", "tasks": [
+      { "text": "Deprioritized — evenings only, focus on job first", "done": false, "created": 1707609600000 }
+    ]},
+    "jobs": { "name": "🎯 Job Search", "tasks": [
+      { "text": "Meeting with Nicholas (Azulene Labs) @ 1pm", "done": false, "created": 1707609600000, "due": "2026-02-11" },
+      { "text": "Start free trial month at Azulene Labs", "done": false, "created": 1707609600000 }
+    ]},
     "teaching": { "name": "📝 Teaching", "tasks": [
       { "text": "Grade papers", "done": false, "created": 1707336840000, "due": "2026-02-10" }
     ]}
