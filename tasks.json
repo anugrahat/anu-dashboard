@@ -9,7 +9,7 @@
       { "text": "Deprioritized — evenings only, focus on job first", "done": false, "created": 1707609600000 }
     ]},
     "jobs": { "name": "🎯 Job Search", "tasks": [
-      { "text": "Meeting with Nicholas (Azulene Labs) @ 1pm", "done": false, "created": 1707609600000, "due": "2026-02-11" },
+      { "text": "Meeting with Nicholas (Azulene Labs) @ 1pm", "done": true, "created": 1707609600000, "due": "2026-02-11" },
       { "text": "Start free trial month at Azulene Labs", "done": false, "created": 1707609600000 }
     ]},
     "teaching": { "name": "📝 Teaching", "tasks": [
@@ -20,7 +20,7 @@
     "life": { "name": "🏠 Life", "tasks": [] },
     "health": { "name": "💪 Health", "tasks": [] },
     "taxes": { "name": "💰 Taxes", "tasks": [
-      { "text": "Call IRS about notice", "done": false, "created": 1707336660000 }
+      { "text": "Call IRS about notice — PAID", "done": true, "created": 1707336660000 }
     ]}
   }
 }
